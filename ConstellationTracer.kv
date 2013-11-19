@@ -1,0 +1,16 @@
+#:kivy 1.7.2
+
+<Constellation>:
+	size_hint: None, None
+	pos_hint: {'center_x':.5, 'center_y':.5}
+
+<Star>:
+	size_hint: None, None
+	size: 8, 8
+	pos_hint: {'center_x':self.azimuth, 'center_y':self.altitude}
+	canvas:
+		Color:
+			rgba: 1, 1, 1, 1
+		Ellipse:
+			size: 8, 8
+			pos: self.pos
