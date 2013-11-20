@@ -3,6 +3,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import NumericProperty
 from kivy.properties import ObjectProperty
+from kivy.properties import VariableListProperty
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.widget import Widget
 
