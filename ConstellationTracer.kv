@@ -7,10 +7,18 @@
 <Star>:
 	size_hint: None, None
 	size: 8, 8
-	pos_hint: {'center_x':self.azimuth, 'center_y':self.altitude}
-	canvas:
+	pos_hint: {'center_x':self.offset_x, 'center_y':self.offset_y}
+	canvas.after:
 		Color:
 			rgba: 1, 1, 1, 1
 		Ellipse:
 			size: 8, 8
 			pos: self.pos
+
+<Connection>:
+	canvas:
+		Color:
+			rgba: 0, 0, 1, 1
+		Line:
+			width: 2
+			points: self.from_star.offset_x * self.width, self.from_star.offset_y * self.height, self.to_star.offset_x * self.width, self.to_star.offset_y * self.height
