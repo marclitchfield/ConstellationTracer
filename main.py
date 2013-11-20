@@ -19,12 +19,14 @@ class Connection(Widget):
     from_star = ObjectProperty(None)
     to_star = ObjectProperty(None)
     points = ListProperty(None)
-    percent = NumericProperty(1)
+    percent = NumericProperty(0)
+    end_pos = (0,0)
 
     def __init__(self, constellation, **kwargs):
         super(Connection, self).__init__(**kwargs)
         self.constellation = constellation
         Window.on_resize = self.update_points
+        self.bind(percent=self.update_points)
         self.update_points()
 
     def update_points(self, width=None, height=None):
@@ -34,8 +36,14 @@ class Connection(Widget):
         y1 = self.to_star.offset_y * self.constellation.height
         angle = math.atan2(y1-y0, x1-x0)
         length = math.sqrt((x1-x0)**2 + (y1-y0)**2) * self.percent
-        p = [x0, y0, x0+math.cos(angle)*length, y0+math.sin(angle)*length]
+        self.end_pos = x0+math.cos(angle)*length, y0+math.sin(angle)*length
+        p = [x0, y0, self.end_pos[0], self.end_pos[1]]
         self.points = p
+
+    def on_touch_move(self, touch):
+        error_distance = 10
+        if abs(touch.pos[0] - self.end_pos[0]) < error_distance and abs(touch.pos[1] - self.end_pos[1]) < error_distance:
+            self.percent = min(1, self.percent + .1)
 
 
 class Constellation(RelativeLayout):
@@ -52,9 +60,12 @@ class Constellation(RelativeLayout):
                  Star(num=5, offset_x=.4, offset_y=.4, connects_to=[3,6]),
                  Star(num=6, offset_x=.4, offset_y=.2, connects_to=[2,5])]
 
-        self.loadConnections(stars)
+        connections = list(self.loadConnections(stars))
         for star in stars:
             self.add_widget(star)
+
+        connections[0].percent = 0.2
+
 
     def resize_constellation(self, width, height):
         length = min(width, height)
@@ -64,7 +75,9 @@ class Constellation(RelativeLayout):
         for from_star in stars:
             for connecting_num in from_star.connects_to:
                 to_star = filter(lambda s: s.num == connecting_num, stars)[0]
-                self.add_widget(Connection(self, from_star=from_star, to_star=to_star))
+                connection = Connection(self, from_star=from_star, to_star=to_star)
+                self.add_widget(connection)
+                yield connection
 
 
 class ConstellationTracerApp(App):
