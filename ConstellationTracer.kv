@@ -10,7 +10,7 @@
 
 <Star>:
 	size_hint: None, None
-	size: 32, 32
+	size: 42, 42
 	pos_hint: {'center_x':self.offset_x, 'center_y':self.offset_y}
 	canvas:
 		Color:
@@ -22,11 +22,6 @@
 <Connection>:
 	canvas:
 		Color:
-			rgba: 0, .3, .9, .6
-		Line:
-			width: 8
-			points: self.points
-		Color:
 			rgba: 1, 1, 1, 1
 		Line:
 			width: 2
@@ -37,7 +32,8 @@
 	size_hint: None, None
 	canvas:
 		Color:
-			rgba: [.9, .9, .9, .7] if self.connection.percent > 0 and self.connection.percent < 1 else [0, 0, 0, 0]
+			rgba: [.9, .9, .9, .4] if self.connection.percent > 0 and self.connection.percent < 1 else [0, 0, 0, 0]
 		Ellipse:
 			size: self.width, self.width
 			pos: self.connection.points[2] - self.width/2, self.connection.points[3] - self.width/2
+			

@@ -5,10 +5,9 @@ from kivy.app import App
 from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.clock import Clock
-from kivy.properties import NumericProperty
-from kivy.properties import ObjectProperty
-from kivy.properties import ListProperty
-from kivy.properties import BooleanProperty
+from kivy.properties import NumericProperty, ObjectProperty, ListProperty, BooleanProperty
+from kivy.graphics import Color, Ellipse
+from kivy.vector import Vector
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.anchorlayout import AnchorLayout
@@ -23,6 +22,20 @@ class Star(Widget):
     connects_to = ObjectProperty(None)
     connected = BooleanProperty(False)
 
+    def __init__(self, **kwargs):
+        super(Star, self).__init__(**kwargs)
+        self.bind(size=self.draw)
+        self.bind(pos=self.draw)
+
+    def draw(self, *args):
+        self.canvas.clear()
+        with self.canvas:
+            sz = self.size[0]
+            for r in range(sz, 8, -6):
+                c = (sz-(r+2))/8.0
+                Color(c*.2, c*.2, c)
+                d = (sz-r)/2
+                Ellipse(size=[r, r], pos=[self.pos[0]+d, self.pos[1]+d])
 
 class Handle(Widget):
     connection = ObjectProperty(None)
@@ -79,7 +92,7 @@ class Connection(Widget):
 
     def do_trace(self, touch):
         speed = .15
-        max_dist = self.from_star.size[0]
+        max_dist = self.from_star.size[0] * 1.5
         dist = math.sqrt((touch.pos[0] - self.end_pos[0]) ** 2 + (touch.pos[1] - self.end_pos[1]) ** 2)
         if dist < max_dist and self.from_star.connected:
             self.percent = min(1, self.percent + speed)
